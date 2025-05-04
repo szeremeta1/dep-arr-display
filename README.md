@@ -39,10 +39,18 @@ Edit [`config.json`](config.json) to set the airport code, API URL, refresh inte
 Example:
 ```json
 {
-  "airport_code": "KBLM",
-  "refresh_interval": 60,
-  "fr24_api_key": "YOUR_API_KEY_HERE"
-}
+    "airport_code": "KBLM",
+    "airport_coordinates": {
+      "latitude": 40.1865,
+      "longitude": -74.1258,
+      "radius": 25
+    },
+    "api_url": "https://api.flightradar24.com/common/v1/airport.json",
+    "refresh_interval": 60,
+    "fr24_api_key": "[YOUR-API-KEY-HERE]",
+    "username": "",
+    "password": ""
+  }
 ```
 
 ## Project Structure
