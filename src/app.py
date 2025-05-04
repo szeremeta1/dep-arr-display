@@ -6,6 +6,8 @@ import json
 import os
 import sys
 import traceback
+from datetime import datetime
+import pytz # type: ignore
 
 app = Flask(__name__)
 
@@ -33,7 +35,12 @@ def update_flight_data():
             print("Fetching flight data...")
             new_data = fetch_flight_data(config["airport_code"], config)
             flight_data = new_data
-            last_successful_update = time.strftime("%H:%M:%S")
+            
+            # Get current time in EDT timezone
+            eastern = pytz.timezone('America/New_York')
+            now = datetime.now(eastern)
+            last_successful_update = now.strftime("%-I:%M %p")  # No leading zeros
+            
             error_message = None
             print(f"Updated flight data: {len(flight_data['departures'])} departures, {len(flight_data['arrivals'])} arrivals")
         except Exception as e:
@@ -44,9 +51,45 @@ def update_flight_data():
         # Sleep for the configured interval
         time.sleep(config.get("refresh_interval", 60))
 
+# Register the filter using the decorator approach
+@app.template_filter('carrier_logo')
+def carrier_logo_filename(carrier):
+    """Find logo for carrier if it exists, otherwise return empty string"""
+    if not carrier:
+        return ''
+    
+    # Map common carriers to their logo filenames
+    mapping = {
+        'NetJets': 'netjets.png',
+        'VistaJet': 'vistajet.png',
+        'Flexjet': 'flexjet.png',
+        'flyExclusive': 'flyexclusive.png',
+        'Red Wing Aviation': 'redwingaviation.png',
+        'Wheels Up': 'wheelsup.png',
+        'Silver Air': 'silverair.png',
+        'XOJET': 'xojet.png',
+        # Add more mappings as needed
+    }
+    
+    # Look for the carrier in our mapping
+    filename = mapping.get(carrier, carrier.lower().replace(' ', '') + '.png')
+    
+    # Check if file exists in static directory
+    static_path = os.path.join(project_dir, 'src', 'static', 'images', filename)
+    if os.path.exists(static_path):
+        return filename
+        
+    # If no logo found, return empty string but don't filter out the flight
+    print(f"No logo found for carrier: {carrier}")
+    return ''
+
 @app.route('/')
 def index():
-    current_time = time.strftime("%H:%M:%S")
+    # Get current time in EDT timezone
+    eastern = pytz.timezone('America/New_York')
+    now = datetime.now(eastern)
+    current_time = now.strftime("%-I:%M %p")  # No leading zeros
+    
     return render_template('index.html', 
                           flights=flight_data, 
                           airport_code=config.get("airport_code", "KBLM"),

@@ -6,6 +6,11 @@
     <title>KBLM Flight Board</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <meta http-equiv="refresh" content="60">
+    <style>
+        .delayed { color: #ff6b6b; }
+        .early { color: #69db7c; }
+        .on-time { color: #ffffff; }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -33,8 +38,14 @@
                     {% if flights.departures %}
                         {% for flight in flights.departures %}
                             <tr>
-                                <td>{{ flight.time }}</td>
+                                <td>{{ flight.scheduled_time }}</td>
                                 <td>
+                                    {% if flight.carrier %}
+                                        {% set logo = flight.carrier|carrier_logo %}
+                                        {% if logo %}
+                                            <img src="/static/images/{{ logo }}" alt="{{ flight.carrier }}" style="height: 20px; margin-right: 5px; vertical-align: middle;">
+                                        {% endif %}
+                                    {% endif %}
                                     {{ flight.flight }}
                                     {% if flight.aircraft %}
                                         <span class="aircraft">{{ flight.aircraft }}</span>
@@ -45,7 +56,16 @@
                                         <span class="airport-code">{{ flight.destination.code }}</span>
                                     {% endif %}
                                 </td>
-                                <td class="status status-{{ flight.status|lower|replace(' ', '-') }}">{{ flight.status }}</td>
+                                <td class="status">
+                                    {% if flight.status == 'Scheduled' %}
+                                        Scheduled
+                                    {% else %}
+                                        Estimated dep
+                                        {% if flight.estimated_time != 'N/A' %}
+                                            <span class="{{ flight.delay_status }}">{{ flight.estimated_time }}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                     {% else %}
@@ -72,8 +92,14 @@
                     {% if flights.arrivals %}
                         {% for flight in flights.arrivals %}
                             <tr>
-                                <td>{{ flight.time }}</td>
+                                <td>{{ flight.scheduled_time }}</td>
                                 <td>
+                                    {% if flight.carrier %}
+                                        {% set logo = flight.carrier|carrier_logo %}
+                                        {% if logo %}
+                                            <img src="/static/images/{{ logo }}" alt="{{ flight.carrier }}" style="height: 20px; margin-right: 5px; vertical-align: middle;">
+                                        {% endif %}
+                                    {% endif %}
                                     {{ flight.flight }}
                                     {% if flight.aircraft %}
                                         <span class="aircraft">{{ flight.aircraft }}</span>
@@ -84,7 +110,16 @@
                                         <span class="airport-code">{{ flight.origin.code }}</span>
                                     {% endif %}
                                 </td>
-                                <td class="status status-{{ flight.status|lower|replace(' ', '-') }}">{{ flight.status }}</td>
+                                <td class="status">
+                                    {% if flight.status == 'Scheduled' %}
+                                        Scheduled
+                                    {% else %}
+                                        Estimated arr
+                                        {% if flight.estimated_time != 'N/A' %}
+                                            <span class="{{ flight.delay_status }}">{{ flight.estimated_time }}</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                     {% else %}
