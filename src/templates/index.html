@@ -79,7 +79,7 @@
                                         {% endif %}
                                         {{ flight.flight }}
                                         {% if flight.aircraft %}
-                                            <span class="aircraft">{{ flight.aircraft }} | {% if flight.registration and flight.registration != 'N/A' %}{{ flight.registration }}{% else %}Not Yet Assigned{% endif %}</span>
+                                            <span class="aircraft">{{ flight.aircraft|aircraft_name }} | {% if flight.registration and flight.registration != 'N/A' %}{{ flight.registration }}{% else %}Not Yet Assigned{% endif %}</span>
                                         {% endif %}
                                     </td>
                                     <td>{{ flight.destination.name }} 
@@ -135,7 +135,7 @@
                                         {% endif %}
                                         {{ flight.flight }}
                                         {% if flight.aircraft %}
-                                            <span class="aircraft">{{ flight.aircraft }} | {% if flight.registration and flight.registration != 'N/A' %}{{ flight.registration }}{% else %}Not Yet Assigned{% endif %}</span>
+                                            <span class="aircraft">{{ flight.aircraft|aircraft_name }} | {% if flight.registration and flight.registration != 'N/A' %}{{ flight.registration }}{% else %}Not Yet Assigned{% endif %}</span>
                                         {% endif %}
                                     </td>
                                     <td>{{ flight.origin.name }}
