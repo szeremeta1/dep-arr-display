@@ -4,6 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KBLM Flight Board</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    
+    <!-- Social Media/Link Preview Metadata -->
+    <meta property="og:title" content="Monmouth Executive Airport Flight Board">
+    <meta property="og:description" content="Live arrivals and departures for Monmouth Executive Airport (KBLM)">
+    <meta property="og:image" content="https://kblm.monmouthpilot.com/preview-image">
+    <meta property="og:url" content="https://kblm.monmouthpilot.com">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Monmouth Executive Airport Flight Board">
+    <meta name="twitter:description" content="Live arrivals and departures for Monmouth Executive Airport (KBLM)">
+    <meta name="twitter:image" content="https://kblm.monmouthpilot.com/preview-image">
+    
+    <!-- Standard metadata -->
+    <meta name="description" content="Live flight information board showing arrivals and departures at Monmouth Executive Airport (KBLM)">
+    
     <link rel="stylesheet" href="/static/css/styles.css">
     <meta http-equiv="refresh" content="60">
     <style>
@@ -15,7 +36,7 @@
 <body>
     <div class="header">
         <img src="/static/images/monmouth-jet-center-logo.png" alt="Monmouth Jet Center Logo" class="logo" style="max-height: 70px; margin-bottom: 10px;">
-        <h1>KBLM - Monmouth Executive Airport</h1>
+        <h1>Monmouth Executive Airport</h1>
         <div class="last-update">Last updated: {{ last_update }}</div>
         {% if error %}
         <div class="error-message">Error: {{ error }}</div>
