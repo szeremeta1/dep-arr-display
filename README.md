@@ -1,4 +1,4 @@
-# KBLM Flight Board
+# Departure/Arrival Display
 
 This project displays a departures and arrivals board for any airport of your choosing using flight data from the FlightRadar24 API.
 
