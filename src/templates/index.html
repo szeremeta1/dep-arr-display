@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBLM Flight Board</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <meta http-equiv="refresh" content="60">
+</head>
+<body>
+    <div class="header">
+        <img src="/static/images/monmouth-jet-center-logo.png" alt="Monmouth Jet Center Logo" class="logo" style="max-height: 70px; margin-bottom: 10px;">
+        <h1>KBLM - Monmouth Executive Airport</h1>
+        <div class="last-update">Last updated: {{ last_update }}</div>
+        {% if error %}
+        <div class="error-message">Error: {{ error }}</div>
+        {% endif %}
+    </div>
+
+    <div class="board-container">
+        <div class="board departures">
+            <h2>DEPARTURES</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Flight</th>
+                        <th>Destination</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if flights.departures %}
+                        {% for flight in flights.departures %}
+                            <tr>
+                                <td>{{ flight.time }}</td>
+                                <td>
+                                    {{ flight.flight }}
+                                    {% if flight.aircraft %}
+                                        <span class="aircraft">{{ flight.aircraft }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ flight.destination.name }} 
+                                    {% if flight.destination.code %}
+                                        <span class="airport-code">{{ flight.destination.code }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="status status-{{ flight.status|lower|replace(' ', '-') }}">{{ flight.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No departures at this time</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="board arrivals">
+            <h2>ARRIVALS</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Flight</th>
+                        <th>Origin</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if flights.arrivals %}
+                        {% for flight in flights.arrivals %}
+                            <tr>
+                                <td>{{ flight.time }}</td>
+                                <td>
+                                    {{ flight.flight }}
+                                    {% if flight.aircraft %}
+                                        <span class="aircraft">{{ flight.aircraft }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ flight.origin.name }}
+                                    {% if flight.origin.code %}
+                                        <span class="airport-code">{{ flight.origin.code }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="status status-{{ flight.status|lower|replace(' ', '-') }}">{{ flight.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">No arrivals at this time</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <footer style="text-align: center; font-size: 0.9em; color: #888; margin-top: 30px;">
+        Made by Alexander Szeremeta &mdash; All Data Courtesy of FlightRadar24
+        Copyright &copy; 2025 MonmouthPilot.com. All rights reserved.
+    </footer>
+</body>
+</html>
