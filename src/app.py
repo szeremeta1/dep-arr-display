@@ -61,13 +61,32 @@ def carrier_logo_filename(carrier):
     # Map common carriers to their logo filenames
     mapping = {
         'NetJets': 'netjets.png',
-        'VistaJet': 'vistajet.png',
+        'Vista America': 'vistajet.png',
         'Flexjet': 'flexjet.png',
         'flyExclusive': 'flyexclusive.png',
         'Red Wing Aviation': 'redwingaviation.png',
         'Wheels Up': 'wheelsup.png',
         'Silver Air': 'silverair.png',
         'XOJET': 'xojet.png',
+        'Baker Aviation': 'bakeraviation.png',
+        'PlaneSense': 'planesense.png',
+        'Ventura': 'ventura.png',
+        'Pacific Coast Jet': 'pacificcoastjet.png',
+        'Global Air Charters': 'globalaircharters.png',
+        'Private Jet Center': 'privatejetcenter.png',
+        'Executive Fliteways': 'executivefliteways.png',
+        'Tradewind Aviation': 'tradewindaviation.png',
+        'Aero-Tech Services': 'aerotechservices.png',
+        'Shoreline Aviation': 'shorelineaviation.png',
+        'Northern Jet Management': 'northernjetmanagement.png',
+        'Aircraft Management Group': 'aircraftmanagementgroup.png',
+        'Fly Alliance': 'flyalliance.png',
+        'Air Methods': 'airmethods.png',
+        'Mountain Aviation': 'mountainaviation.png',
+        'Jet Linx Aviation': 'jetlinxaviation.png',
+        'Thrive': 'thrive.png',
+        'Jet Aviation Flight Services': 'jetaviation.png',
+        'Fltplan': 'fltplan.png',
         # Add more mappings as needed
     }
     
