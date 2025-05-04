@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify # type: ignore
 from services.flight_data_fetcher import fetch_flight_data
-from services.aviation_stack_service import AviationStackService
+from services.aircraft_data_service import AircraftDataService
 import threading
 import time
 import json
@@ -26,7 +26,7 @@ except Exception as e:
     sys.exit(1)
 
 # Initialize services
-aviation_stack = AviationStackService(config)
+aircraft_data_service = AircraftDataService(config)
 
 flight_data = {"departures": [], "arrivals": []}
 last_successful_update = None
@@ -108,11 +108,11 @@ def carrier_logo_filename(carrier):
 
 @app.template_filter('aircraft_name')
 def aircraft_fullname(code):
-    """Map aircraft code to full aircraft name using AviationStack"""
+    """Map aircraft code to full aircraft name using AircraftDataService"""
     if not code or code == 'N/A':
         return 'Unknown'
         
-    return aviation_stack.get_aircraft_name(code)
+    return aircraft_data_service.get_aircraft_name(code)
 
 @app.route('/')
 def index():

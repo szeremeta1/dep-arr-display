@@ -1,6 +1,6 @@
 # Departure/Arrival Display
 
-This project displays a departures and arrivals board for any airport of your choosing using live flight data from the FlightRadar24 API. It also shows full aircraft model names and registration numbers using the AviationStack API.
+This project displays a departures and arrivals board for any airport of your choosing using live flight data from the FlightRadar24 API. It also shows full aircraft model names and registration numbers using a local CSV lookup.
 
 ---
 
@@ -13,24 +13,23 @@ This project was originally developed for KBLM (Monmouth Executive Airport), a p
 ## Features
 
 - **Live Departures and Arrivals:** Fetches and displays up-to-date flight information for the configured airport.
-- **Full Aircraft Model Names:** Uses the AviationStack API to display the full aircraft model name and N-number.
+- **Full Aircraft Model Names:** Uses a local CSV to display the full aircraft model name and N-number.
 - **Minimalist Display:** No gates, terminals, or baggage info—just the essentials for a small airport.
 - **Carrier Logos:** Displays carrier logos when available.
-- **Automatic Refresh:** The board refreshes automatically every 60 seconds.
+- **Automatic Refresh:** The board refreshes automatically every 60 seconds (customizable).
 - **Error Handling:** Displays error messages if data cannot be fetched.
 - **Easy Customization:** Change the airport or display settings via `config.json`.
-- **Local Caching:** Aircraft type lookups are cached locally to minimize API calls.
+- **Local Caching:** Aircraft type lookups are cached locally to minimize repeated lookups.
+- **Responsive Design:** Optimized for display on TVs, tablets, and mobile devices.
 
 ---
 
 ## Setup
 
-### 1. Get API Keys
+### 1. Get API Key
 
 - **FlightRadar24:**  
   Sign up for a FlightRadar24 subscription [here](https://www.flightradar24.com/premium/) (the Explorer plan at $9/month is sufficient).
-- **AviationStack:**  
-  Sign up for a free AviationStack account [here](https://aviationstack.com/) to get an API key for aircraft type lookups.
 
 ### 2. Install dependencies
 
@@ -38,9 +37,9 @@ This project was originally developed for KBLM (Monmouth Executive Airport), a p
 pip install -r requirements.txt
 ```
 
-### 3. Configure API Keys
+### 3. Configure API Key
 
-Edit [`config.json`](config.json) and add your API keys:
+Edit [`config.json`](config.json) and add your API key:
 
 ```json
 {
@@ -53,11 +52,13 @@ Edit [`config.json`](config.json) and add your API keys:
   "api_url": "https://api.flightradar24.com/common/v1/airport.json",
   "refresh_interval": 60,
   "fr24_api_key": "YOUR_FLIGHTRADAR24_API_KEY",
-  "aviationstack_key": "YOUR_AVIATIONSTACK_API_KEY",
   "username": "",
   "password": ""
 }
 ```
+
+- Change `"airport_code"` and coordinates as needed for your airport.
+- Adjust `"refresh_interval"` (in seconds) for how often the board updates.
 
 ### 4. Run the application
 
@@ -78,7 +79,7 @@ http://localhost:5000
 - **Flight Data:**  
   Flight information is fetched from the FlightRadar24 API.
 - **Aircraft Type Lookup:**  
-  The aircraft code (e.g., "CL35") is sent to the AviationStack API, which returns the full model name (e.g., "Challenger 350"). Results are cached in `data/aircraft_cache.json` for efficiency.
+  The aircraft code (e.g., "CL35") is looked up in a local CSV (`src/static/aircraft_data.csv`), which returns the full model name (e.g., "Challenger 350"). Results are cached in `data/aircraft_cache.json` for efficiency.
 - **Display:**  
   The board shows scheduled and estimated times, flight numbers, full aircraft model names, registration numbers, and carrier logos (if available).
 
@@ -88,9 +89,12 @@ http://localhost:5000
 
 - [`src/app.py`](src/app.py): Main Flask application.
 - [`src/services/flight_data_fetcher.py`](src/services/flight_data_fetcher.py): Fetches and parses flight data from FlightRadar24.
-- [`src/services/aviation_stack_service.py`](src/services/aviation_stack_service.py): Looks up full aircraft model names using AviationStack and caches results.
+- [`src/services/aircraft_data_service.py`](src/services/aircraft_data_service.py): Loads aircraft model names from a local CSV.
 - [`src/templates/index.html`](src/templates/index.html): Jinja2 template for the flight board display.
 - [`src/static/`](src/static/): Static assets (CSS, JS, images).
+  - [`src/static/css/styles.css`](src/static/css/styles.css): Main stylesheet for the board.
+  - [`src/static/images/`](src/static/images/): Carrier and airport logos.
+  - [`src/static/aircraft_data.csv`](src/static/aircraft_data.csv): Local CSV for aircraft type lookups.
 - [`config.json`](config.json): Configuration file for airport and API settings.
 - [`data/aircraft_cache.json`](data/aircraft_cache.json): Local cache for aircraft type lookups (created automatically).
 
@@ -99,11 +103,13 @@ http://localhost:5000
 ## Customization
 
 - **Airport:**  
-  Change the `"airport_code"` in `config.json` to any ICAO code supported by FlightRadar24.
+  Change the `"airport_code"` and coordinates in `config.json` to any ICAO code supported by FlightRadar24.
 - **Logos:**  
-  Add carrier logos as PNG files to `src/static/images/` and update the carrier mapping in `app.py` if needed.
+  Add carrier logos as PNG files to `src/static/images/` and update the carrier mapping in `src/app.py` if needed.
 - **Refresh Rate:**  
   Adjust `"refresh_interval"` in `config.json` (in seconds).
+- **Styling:**  
+  Edit `src/static/css/styles.css` or the inline styles in `src/templates/index.html` for custom branding or layout.
 
 ---
 
@@ -111,19 +117,20 @@ http://localhost:5000
 
 - This project is designed for small airports and FBOs, but can be adapted for any airport supported by FlightRadar24.
 - Carrier logos are matched by name and must be present in `src/static/images/` to display.
-- All data is obtained from the FlightRadar24 and AviationStack APIs.
-- Aircraft type lookups are cached locally to reduce API usage and speed up display.
+- All data is obtained from the FlightRadar24 API.
+- Aircraft type lookups are cached locally to reduce repeated lookups and speed up display.
+- The board is intended for informational use only and is not an official source of flight information.
 
 ---
 
 ## Troubleshooting
 
 - **No aircraft model name shown:**  
-  Make sure your AviationStack API key is valid and you have internet access. The cache will fall back to the code if the API is unavailable.
+  Make sure the aircraft code exists in `src/static/aircraft_data.csv`. The cache will fall back to the code if not found.
 - **No flight data:**  
   Ensure your FlightRadar24 API key is correct and your subscription is active.
 - **Carrier logo missing:**  
-  Add the logo PNG to `src/static/images/` and/or update the mapping in `app.py`.
+  Add the logo PNG to `src/static/images/` and/or update the mapping in `src/app.py`.
 
 ---
 
@@ -135,4 +142,4 @@ This project is licensed under the GNU General Public License v3.0. See [`LICENS
 
 ## Credits
 
-Made by Alexander Szeremeta — All Data Courtesy of FlightRadar24 and AviationStack.
+Made by Alexander Szeremeta — All Data Courtesy of FlightRadar24.

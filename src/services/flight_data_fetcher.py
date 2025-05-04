@@ -74,6 +74,7 @@ def fetch_flight_data(airport_code, config):
                                     delay_status = "early"
                         arrivals.append({
                             'scheduled_time': scheduled_time or 'N/A',
+                            'scheduled_timestamp': times.get('scheduled', {}).get('arrival', 0),
                             'estimated_time': estimated_time or 'N/A',
                             'delay_status': delay_status,
                             'flight': f.get('identification', {}).get('callsign')
@@ -147,6 +148,7 @@ def fetch_flight_data(airport_code, config):
                                     delay_status = "early"
                         departures.append({
                             'scheduled_time': scheduled_time or 'N/A',
+                            'scheduled_timestamp': times.get('scheduled', {}).get('departure', 0),
                             'estimated_time': estimated_time or 'N/A',
                             'delay_status': delay_status,
                             'flight': f.get('identification', {}).get('callsign')
@@ -167,9 +169,9 @@ def fetch_flight_data(airport_code, config):
         else:
             print(f"Failed to fetch departures: {departure_response.text}")
 
-        # Sort by scheduled time (including flights with no carrier/logo)
-        departures.sort(key=lambda x: x.get('scheduled_time', ''))
-        arrivals.sort(key=lambda x: x.get('scheduled_time', ''))
+        # Sort by scheduled timestamp (including flights with no carrier/logo)
+        departures.sort(key=lambda x: x.get('scheduled_timestamp', 0))
+        arrivals.sort(key=lambda x: x.get('scheduled_timestamp', 0))
 
         result = {
             'departures': departures,
