@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KBLM Flight Board</title>
     <link rel="stylesheet" href="/static/css/styles.css">
     <meta http-equiv="refresh" content="60">
@@ -25,110 +25,114 @@
     <div class="board-container">
         <div class="board departures">
             <h2>DEPARTURES</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Flight</th>
-                        <th>Destination</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if flights.departures %}
-                        {% for flight in flights.departures %}
-                            <tr>
-                                <td>{{ flight.scheduled_time }}</td>
-                                <td>
-                                    {% if flight.carrier %}
-                                        {% set logo = flight.carrier|carrier_logo %}
-                                        {% if logo %}
-                                            <img src="/static/images/{{ logo }}" alt="{{ flight.carrier }}" style="height: 20px; margin-right: 5px; vertical-align: middle;">
-                                        {% endif %}
-                                    {% endif %}
-                                    {{ flight.flight }}
-                                    {% if flight.aircraft %}
-                                        <span class="aircraft">{{ flight.aircraft }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ flight.destination.name }} 
-                                    {% if flight.destination.code %}
-                                        <span class="airport-code">{{ flight.destination.code }}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="status">
-                                    {% if flight.status == 'Scheduled' %}
-                                        Scheduled
-                                    {% else %}
-                                        Estimated dep
-                                        {% if flight.estimated_time != 'N/A' %}
-                                            <span class="{{ flight.delay_status }}">{{ flight.estimated_time }}</span>
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
                         <tr>
-                            <td colspan="4">No departures at this time</td>
+                            <th>Time</th>
+                            <th>Flight</th>
+                            <th>Destination</th>
+                            <th>Status</th>
                         </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% if flights.departures %}
+                            {% for flight in flights.departures %}
+                                <tr>
+                                    <td>{{ flight.scheduled_time }}</td>
+                                    <td>
+                                        {% if flight.carrier %}
+                                            {% set logo = flight.carrier|carrier_logo %}
+                                            {% if logo %}
+                                                <img src="/static/images/{{ logo }}" alt="{{ flight.carrier }}" style="height: 20px; margin-right: 5px; vertical-align: middle;">
+                                            {% endif %}
+                                        {% endif %}
+                                        {{ flight.flight }}
+                                        {% if flight.aircraft %}
+                                            <span class="aircraft">{{ flight.aircraft }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ flight.destination.name }} 
+                                        {% if flight.destination.code %}
+                                            <span class="airport-code">{{ flight.destination.code }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="status">
+                                        {% if flight.status == 'Scheduled' %}
+                                            Scheduled
+                                        {% else %}
+                                            Estimated dep
+                                            {% if flight.estimated_time != 'N/A' %}
+                                                <span class="{{ flight.delay_status }}">{{ flight.estimated_time }}</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4">No departures at this time</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="board arrivals">
             <h2>ARRIVALS</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Flight</th>
-                        <th>Origin</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if flights.arrivals %}
-                        {% for flight in flights.arrivals %}
-                            <tr>
-                                <td>{{ flight.scheduled_time }}</td>
-                                <td>
-                                    {% if flight.carrier %}
-                                        {% set logo = flight.carrier|carrier_logo %}
-                                        {% if logo %}
-                                            <img src="/static/images/{{ logo }}" alt="{{ flight.carrier }}" style="height: 20px; margin-right: 5px; vertical-align: middle;">
-                                        {% endif %}
-                                    {% endif %}
-                                    {{ flight.flight }}
-                                    {% if flight.aircraft %}
-                                        <span class="aircraft">{{ flight.aircraft }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ flight.origin.name }}
-                                    {% if flight.origin.code %}
-                                        <span class="airport-code">{{ flight.origin.code }}</span>
-                                    {% endif %}
-                                </td>
-                                <td class="status">
-                                    {% if flight.status == 'Scheduled' %}
-                                        Scheduled
-                                    {% else %}
-                                        Estimated arr
-                                        {% if flight.estimated_time != 'N/A' %}
-                                            <span class="{{ flight.delay_status }}">{{ flight.estimated_time }}</span>
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
                         <tr>
-                            <td colspan="4">No arrivals at this time</td>
+                            <th>Time</th>
+                            <th>Flight</th>
+                            <th>Origin</th>
+                            <th>Status</th>
                         </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% if flights.arrivals %}
+                            {% for flight in flights.arrivals %}
+                                <tr>
+                                    <td>{{ flight.scheduled_time }}</td>
+                                    <td>
+                                        {% if flight.carrier %}
+                                            {% set logo = flight.carrier|carrier_logo %}
+                                            {% if logo %}
+                                                <img src="/static/images/{{ logo }}" alt="{{ flight.carrier }}" style="height: 20px; margin-right: 5px; vertical-align: middle;">
+                                            {% endif %}
+                                        {% endif %}
+                                        {{ flight.flight }}
+                                        {% if flight.aircraft %}
+                                            <span class="aircraft">{{ flight.aircraft }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ flight.origin.name }}
+                                        {% if flight.origin.code %}
+                                            <span class="airport-code">{{ flight.origin.code }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="status">
+                                        {% if flight.status == 'Scheduled' %}
+                                            Scheduled
+                                        {% else %}
+                                            Estimated arr
+                                            {% if flight.estimated_time != 'N/A' %}
+                                                <span class="{{ flight.delay_status }}">{{ flight.estimated_time }}</span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4">No arrivals at this time</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <footer style="text-align: center; font-size: 0.9em; color: #888; margin-top: 30px;">

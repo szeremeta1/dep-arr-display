@@ -108,3 +108,64 @@ tr:hover td {
     max-width: 80%;
     font-weight: bold;
 }
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 768px) {
+    .board-container {
+        flex-direction: column;
+    }
+    
+    .board {
+        min-width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    table {
+        font-size: 14px;
+    }
+    
+    th, td {
+        padding: 8px 4px;
+    }
+    
+    /* Hide less important columns on very small screens */
+    @media screen and (max-width: 380px) {
+        .aircraft {
+            display: none;
+        }
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* Optimize column widths for mobile */
+    th:first-child, td:first-child {
+        width: 20%;
+    }
+    th:nth-child(2), td:nth-child(2) {
+        width: 30%;
+    }
+    th:nth-child(3), td:nth-child(3) {
+        width: 30%;
+    }
+    th:last-child, td:last-child {
+        width: 20%;
+    }
+    
+    /* Adjust logo size */
+    td img {
+        height: 16px !important;
+    }
+
+    .status span {
+        display: block;
+    }
+}
