@@ -79,6 +79,7 @@ def fetch_flight_data(airport_code, config):
                             'flight': f.get('identification', {}).get('callsign')
                                       or f.get('identification', {}).get('number', {}).get('default', 'N/A'),
                             'aircraft': f.get('aircraft', {}).get('model', {}).get('code', 'N/A'),
+                            'registration': f.get('aircraft', {}).get('registration', 'N/A'),
                             'origin': {
                                 'code': f.get('airport', {}).get('origin', {}).get('code', {}).get('iata', 'N/A'),
                                 'name': f.get('airport', {}).get('origin', {}).get('name', 'Unknown')
@@ -151,6 +152,7 @@ def fetch_flight_data(airport_code, config):
                             'flight': f.get('identification', {}).get('callsign')
                                       or f.get('identification', {}).get('number', {}).get('default', 'N/A'),
                             'aircraft': f.get('aircraft', {}).get('model', {}).get('code', 'N/A'),
+                            'registration': f.get('aircraft', {}).get('registration', 'N/A'),
                             'destination': {
                                 'code': f.get('airport', {}).get('destination', {}).get('code', {}).get('iata', 'N/A'),
                                 'name': f.get('airport', {}).get('destination', {}).get('name', 'Unknown')

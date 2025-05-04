@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KBLM Flight Board</title>
     
     <!-- Favicon -->
@@ -31,6 +31,15 @@
         .delayed { color: #ff6b6b; }
         .early { color: #69db7c; }
         .on-time { color: #ffffff; }
+        .aircraft {
+            display: block;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .netjets {
+            font-size: 12px;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
@@ -70,7 +79,7 @@
                                         {% endif %}
                                         {{ flight.flight }}
                                         {% if flight.aircraft %}
-                                            <span class="aircraft">{{ flight.aircraft }}</span>
+                                            <span class="aircraft">{{ flight.aircraft }} | {% if flight.registration and flight.registration != 'N/A' %}{{ flight.registration }}{% else %}Not Yet Assigned{% endif %}</span>
                                         {% endif %}
                                     </td>
                                     <td>{{ flight.destination.name }} 
@@ -126,7 +135,7 @@
                                         {% endif %}
                                         {{ flight.flight }}
                                         {% if flight.aircraft %}
-                                            <span class="aircraft">{{ flight.aircraft }}</span>
+                                            <span class="aircraft">{{ flight.aircraft }} | {% if flight.registration and flight.registration != 'N/A' %}{{ flight.registration }}{% else %}Not Yet Assigned{% endif %}</span>
                                         {% endif %}
                                     </td>
                                     <td>{{ flight.origin.name }}

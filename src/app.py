@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify # type: ignore
 from services.flight_data_fetcher import fetch_flight_data
+from services.aviation_stack_service import AviationStackService
 import threading
 import time
 import json
@@ -23,6 +24,9 @@ try:
 except Exception as e:
     print(f"Error loading config from {config_path}: {e}")
     sys.exit(1)
+
+# Initialize services
+aviation_stack = AviationStackService(config)
 
 flight_data = {"departures": [], "arrivals": []}
 last_successful_update = None
@@ -101,6 +105,14 @@ def carrier_logo_filename(carrier):
     # If no logo found, return empty string but don't filter out the flight
     print(f"No logo found for carrier: {carrier}")
     return ''
+
+@app.template_filter('aircraft_name')
+def aircraft_fullname(code):
+    """Map aircraft code to full aircraft name using AviationStack"""
+    if not code or code == 'N/A':
+        return 'Unknown'
+        
+    return aviation_stack.get_aircraft_name(code)
 
 @app.route('/')
 def index():
