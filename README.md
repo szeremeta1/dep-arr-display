@@ -1,12 +1,12 @@
 # Departure/Arrival Display
 
-This project displays a departures and arrivals board for any airport of your choosing using live flight data from the FlightRadar24 API. It also shows full aircraft model names and registration numbers using a local CSV lookup.
-<img width="1790" alt="image" src="https://github.com/user-attachments/assets/03d8579b-6c20-43d4-b5a0-d1a9a6229c01" />
+This project displays a departures and arrivals board for any airport using live flight data from the FlightRadar24 API. It also shows full aircraft model names and registration numbers using a local CSV lookup. The design is minimalist and optimized for FBO lobbies, pilot lounges, and small airports.
+
 ---
 
 ## Background
 
-This project was originally developed for KBLM (Monmouth Executive Airport), a popular jet center in the northeast United States. KBLM is a smaller general aviation airport, primarily serving private and charter jets, so the board is intentionally simple: there is no gate, terminal, or baggage information, and the focus is on scheduled and estimated times, flight numbers, aircraft types, and carriers. The design is optimized for FBO lobbies and pilot lounges, where concise, real-time information is most useful.
+Originally developed for KBLM (Monmouth Executive Airport), this board is intentionally simple: no gate, terminal, or baggage info—just scheduled/estimated times, flight numbers, aircraft types, and carriers. The design is responsive and suitable for TVs, tablets, and mobile devices.
 
 ---
 
@@ -29,7 +29,7 @@ This project was originally developed for KBLM (Monmouth Executive Airport), a p
 ### 1. Get API Key
 
 - **FlightRadar24:**  
-  Sign up for a FlightRadar24 subscription [here](https://fr24api.flightradar24.com/subscriptions-and-credits) (the Explorer plan at $9/month is sufficient).
+  Sign up for a FlightRadar24 subscription [here](https://www.flightradar24.com/premium/) (the Explorer plan at $9/month is sufficient).
 
 ### 2. Install dependencies
 
@@ -37,9 +37,9 @@ This project was originally developed for KBLM (Monmouth Executive Airport), a p
 pip install -r requirements.txt
 ```
 
-### 3. Configure API Key
+### 3. Configure API Key and Settings
 
-Edit [`config.json`](config.json) and add your API key:
+Edit [`config.json`](config.json) and add your API key and airport details:
 
 ```json
 {
@@ -68,9 +68,7 @@ python src/app.py
 
 ### 5. Access the board in your browser
 
-```
-http://localhost:5000
-```
+Open [http://localhost:5000](http://localhost:5000) in your browser.
 
 ---
 
@@ -115,7 +113,7 @@ http://localhost:5000
 
 ## Notes
 
-- This project is designed for small airports and FBOs, but can be adapted for any airport supported by FlightRadar24.
+- Designed for small airports and FBOs, but can be adapted for any airport supported by FlightRadar24.
 - Carrier logos are matched by name and must be present in `src/static/images/` to display.
 - All data is obtained from the FlightRadar24 API.
 - Aircraft type lookups are cached locally to reduce repeated lookups and speed up display.
@@ -131,6 +129,8 @@ http://localhost:5000
   Ensure your FlightRadar24 API key is correct and your subscription is active.
 - **Carrier logo missing:**  
   Add the logo PNG to `src/static/images/` and/or update the mapping in `src/app.py`.
+- **App not starting:**  
+  Check that all dependencies are installed and your Python version is compatible (Python 3.7+ recommended).
 
 ---
 
