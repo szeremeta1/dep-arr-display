@@ -5,9 +5,28 @@ from datetime import datetime, timezone, timedelta
 import os
 import pytz # type: ignore
 
+# Global dict to track diverted/cancelled flights with their timestamp
+# Structure: {flight_id: {'status': status, 'timestamp': timestamp, 'diverted_to': airport_code}}
+cancelled_flights = {}
+
+# Helper function to clean out old cancelled/diverted flights
+def clean_cancelled_flights():
+    current_time = time.time()
+    # Remove flights that have been cancelled/diverted for more than 30 minutes
+    to_remove = []
+    for flight_id, data in cancelled_flights.items():
+        if current_time - data['timestamp'] > 1800:  # 1800 seconds = 30 minutes
+            to_remove.append(flight_id)
+    
+    for flight_id in to_remove:
+        del cancelled_flights[flight_id]
+
 def fetch_flight_data(airport_code, config):
     """Fetch ALL FlightRadar24 data for the specified airport, including flights with no carrier or logo."""
     print(f"Fetching FlightRadar24 data for {airport_code}")
+    
+    # Clean old cancelled/diverted flights first
+    clean_cancelled_flights()
     
     base_url = "https://api.flightradar24.com/common/v1/airport.json"
     local_tz = pytz.timezone('America/New_York')
@@ -72,6 +91,47 @@ def fetch_flight_data(airport_code, config):
                                     delay_status = "delayed"
                                 elif delay_mins < -5:
                                     delay_status = "early"
+                        status_text = f.get('status', {}).get('text', 'N/A')
+                        flight_id = f.get('identification', {}).get('id', '') or f.get('identification', {}).get('callsign', '')
+                        
+                        # Check if flight is diverted or cancelled
+                        is_special_status = False
+                        diverted_to = None
+                        
+                        # Check if status text indicates diversion
+                        if "divert" in status_text.lower():
+                            # Extract diversion airport if possible
+                            # Assuming format like "Diverted to TTN"
+                            parts = status_text.lower().split("to ")
+                            if len(parts) > 1:
+                                diverted_to = parts[1].strip().upper()
+                            
+                            # Track this diverted flight
+                            cancelled_flights[flight_id] = {
+                                'status': 'diverted',
+                                'timestamp': time.time(),
+                                'diverted_to': diverted_to
+                            }
+                            is_special_status = True
+                            status_class = "cancelled"
+                        
+                        elif "cancel" in status_text.lower():
+                            # Track this cancelled flight
+                            cancelled_flights[flight_id] = {
+                                'status': 'cancelled',
+                                'timestamp': time.time()
+                            }
+                            is_special_status = True
+                            status_class = "cancelled"
+                        
+                        # Check if it's a previously stored diverted/cancelled flight
+                        elif flight_id in cancelled_flights:
+                            is_special_status = True
+                            if cancelled_flights[flight_id]['status'] == 'diverted':
+                                diverted_to = cancelled_flights[flight_id].get('diverted_to')
+                                status_text = f"Diverted to {diverted_to}" if diverted_to else "Diverted"
+                            status_class = "cancelled"
+                            
                         arrivals.append({
                             'scheduled_time': scheduled_time or 'N/A',
                             'scheduled_timestamp': times.get('scheduled', {}).get('arrival', 0),
@@ -85,7 +145,9 @@ def fetch_flight_data(airport_code, config):
                                 'code': f.get('airport', {}).get('origin', {}).get('code', {}).get('iata', 'N/A'),
                                 'name': f.get('airport', {}).get('origin', {}).get('name', 'Unknown')
                             },
-                            'status': f.get('status', {}).get('text', 'N/A'),
+                            'status': status_text,
+                            'status_class': status_class if is_special_status else delay_status,
+                            'is_special_status': is_special_status,
                             'carrier': f.get('airline', {}).get('name', '') if f.get('airline') else ''
                         })
                     except Exception as e:

@@ -98,6 +98,10 @@ tr:hover td {
 .status-en-route { color: #6495ED; }
 .status-estimated { color: #FF8C00; }
 .status-live { color: #FF8C00; }
+.cancelled { 
+    color: #ff3333; 
+    font-weight: bold;
+}
 
 .error-message {
     background-color: #ff3333;
