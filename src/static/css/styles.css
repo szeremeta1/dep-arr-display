@@ -14,13 +14,58 @@ body {
     padding: 30px 0 10px 0;
 }
 
-.clock-wrapper {
+.widget-box {
+    width: 200px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 180px;
-    padding-left: 50px;
-    padding-right: 50px;
+    background: linear-gradient(135deg, #23272b 80%, #3a4a5a 100%);
+    border-radius: 14px;
+    box-shadow: 0 0 16px 0 rgba(100, 149, 237, 0.27);
+    border: 2px solid #b0c4de;
+    font-family: 'JetBrains Mono', 'Fira Mono', 'Menlo', 'Consolas', monospace;
+    color: #eaf6ff;
+    font-size: 1.1em;
+    font-weight: 600;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    padding: 8px 16px;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.weather-widget,
+.digital-clock {
+    width: 200px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.header-container > .weather-widget {
+    justify-self: start;
+    margin-left: 40px;
+}
+
+.header-container > .clock-wrapper {
+    justify-self: end;
+    margin-right: 40px;
+}
+
+.clock-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 200px;
+    box-sizing: border-box;
+    padding: 0;
 }
 
 .clock-wrapper.left {
@@ -31,23 +76,186 @@ body {
     justify-content: flex-end;
 }
 
-.header {
-    flex-grow: 1;
+.logo-center {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    flex: 1 1 auto;
+    margin: 0 40px;
     text-align: center;
-    min-width: 400px;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.logo {
+    max-height: 120px;
+    height: 120px;
+    animation: logoEffect 5s infinite alternate;
+    transform-origin: center center;
+}
+
+.header {
+    width: 100%;
+    text-align: center;
 }
 
 .header h1 {
-    margin: 0;
-    font-size: 2.6em;
+    font-size: 2.4em;
+    font-family: 'JetBrains Mono', 'Fira Mono', 'Menlo', 'Consolas', monospace;
+    color: #6ea0df;
     font-weight: 700;
+    margin: 0;
     letter-spacing: 1px;
-    color: #5d7ea6;
-    text-align: center;
+}
+
+.weather-icon {
+    width: 32px;
+    height: 32px;
+    margin-right: 12px;
+    filter: drop-shadow(0 0 6px rgba(100, 149, 237, 0.53)) invert(1) brightness(1.5);
+}
+
+.weather-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.weather-temp {
+    font-size: 1.2em;
+    color: #b0c4de;
+    font-weight: 700;
+}
+
+.weather-desc {
+    font-size: 0.9em;
+    color: #eaf6ff;
+    opacity: 0.85;
+}
+
+@media screen and (max-width: 900px) {
+    .header-container {
+        padding: 16px 20px;
+    }
+    .logo-center {
+        margin: 0 20px;
+    }
+    .logo-container img.logo,
+    .logo {
+        height: 80px;
+        max-height: 80px;
+    }
+    .header h1 {
+        font-size: 1.6em;
+    }
+    .widget-box,
+    .weather-widget,
+    .digital-clock {
+        width: 160px;
+        height: 70px;
+    }
+    .header-container > .weather-widget {
+        margin-left: 20px;
+    }
+    .header-container > .clock-wrapper {
+        margin-right: 20px;
+    }
+    .clock-wrapper,
+    .clock-wrapper.left,
+    .clock-wrapper.right {
+        min-width: 160px;
+        padding-left: 0;
+        padding-right: 20px;
+    }
+    .weather-icon {
+        filter: drop-shadow(0 0 6px rgba(100, 149, 237, 0.53)) invert(1) brightness(1.5);
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .header-container {
+        padding: 10px 10px;
+    }
+    .logo-center {
+        margin: 0 10px;
+    }
+    .logo-container img.logo,
+    .logo {
+        height: 60px;
+        max-height: 60px;
+    }
+    .header h1 {
+        font-size: 1.2em;
+    }
+    .widget-box,
+    .weather-widget,
+    .digital-clock {
+        width: 120px;
+        height: 60px;
+        font-size: 0.9em;
+        padding: 5px 8px;
+    }
+    .header-container > .weather-widget {
+        margin-left: 10px;
+    }
+    .header-container > .clock-wrapper {
+        margin-right: 10px;
+    }
+    .clock-wrapper,
+    .clock-wrapper.left,
+    .clock-wrapper.right {
+        min-width: 120px;
+        padding-left: 0;
+        padding-right: 10px;
+    }
+    .weather-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 6px;
+        filter: drop-shadow(0 0 6px rgba(100, 149, 237, 0.53)) invert(1) brightness(1.5);
+    }
+    .weather-temp {
+        font-size: 1em;
+    }
+    .weather-desc {
+        font-size: 0.8em;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    .widget-box,
+    .weather-widget,
+    .digital-clock {
+        width: 100px;
+        height: 50px;
+        font-size: 0.8em;
+        padding: 4px 6px;
+    }
+    .header-container > .weather-widget {
+        margin-left: 5px;
+    }
+    .header-container > .clock-wrapper {
+        margin-right: 5px;
+    }
+    .weather-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 4px;
+        filter: drop-shadow(0 0 6px rgba(100, 149, 237, 0.53)) invert(1) brightness(1.5);
+    }
+    .weather-temp {
+        font-size: 0.9em;
+    }
+    .weather-desc {
+        font-size: 0.7em;
+    }
 }
 
 h1 {
@@ -155,19 +363,6 @@ tr:hover td {
     -webkit-overflow-scrolling: touch;
 }
 
-.logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.logo {
-    max-height: 110px;
-    animation: logoEffect 5s infinite alternate;
-    transform-origin: center center;
-}
-
 @keyframes logoEffect {
     0% {
         opacity: 1;
@@ -212,20 +407,13 @@ tr:hover td {
 }
 
 .digital-clock {
-    padding: 18px 32px;
-    min-width: 200px;
+    padding: 0;
+    min-width: 0;
     text-align: center;
-    background: linear-gradient(135deg, #23272b 80%, #3a4a5a 100%);
-    border-radius: 16px;
-    font-family: 'JetBrains Mono', 'Fira Mono', 'Menlo', 'Consolas', monospace;
-    font-weight: 600;
-    font-size: 32px;
-    color: #eaf6ff;
-    letter-spacing: 2px;
-    box-shadow: 0 0 24px 0 rgba(100,180,255,0.18), 0 0 0 2px #b0c4de;
-    border: 2px solid #b0c4de;
+    background: none;
+    border: none;
+    box-shadow: none;
     text-shadow: 0 2px 8px #1a2a3a, 0 0 8px #6495ed;
-    animation: digitalPulse 2s infinite alternate;
 }
 
 @keyframes digitalPulse {

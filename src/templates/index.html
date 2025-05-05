@@ -29,6 +29,15 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
     <meta http-equiv="refresh" content="60">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
         .delayed { color: #ff6b6b; }
         .early { color: #69db7c; }
         .on-time { color: #ffffff; }
@@ -41,65 +50,117 @@
             font-size: 12px;
             color: #aaa;
         }
-        .clock-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .analog-clock {
-            margin-right: 10px;
-        }
-        .digital-clock {
-            font-size: 1.2em;
-            color: #fff;
-        }
+        
+        /* Remove any inline widget styling to prevent override conflicts */
+
+        /* Clock-specific time display styling */
         .time-unit {
-            font-size: 1.2em;
-            color: #fff;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
-        .time-separator {
-            font-size: 1.2em;
-            color: #fff;
-        }
-        .time-period {
-            font-size: 0.7em;
-            color: #fff;
-        }
-        .time-unit {
-            font-weight: 500;
-        }
+        
         .time-separator {
             opacity: 0.8;
-            margin: 0 2px;
-            transition: opacity 0.5s ease;
+            margin: 0 4px;
+            transition: opacity 0.5s;
+            font-size: 1.1em;
         }
+        
         .time-period {
             font-size: 0.7em;
-            margin-left: 5px;
-            opacity: 0.9;
-            font-weight: 300;
+            margin-left: 8px;
+            opacity: 0.85;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+        
+        @media screen and (max-width: 900px) {
+            .header-container {
+                padding: 16px 20px;
+            }
+            .logo-center {
+                margin: 0 20px;
+            }
+            .logo-container img.logo {
+                height: 80px;
+                max-height: 80px;
+            }
+            .header h1 {
+                font-size: 1.6em;
+            }
+            .widget-box {
+                width: 160px;
+                height: 70px;
+            }
+        }
+        
+        @media screen and (max-width: 600px) {
+            .header-container {
+                padding: 10px 10px;
+            }
+            .logo-center {
+                margin: 0 10px;
+            }
+            .widget-box {
+                width: 120px;
+                height: 60px;
+                min-height: auto;
+                font-size: 0.9em;
+                padding: 5px 8px;
+            }
+            .logo-container img.logo {
+                height: 60px;
+                max-height: 60px;
+            }
+            .header h1 {
+                font-size: 1.2em;
+            }
+            .weather-icon {
+                width: 24px;
+                height: 24px;
+                margin-right: 6px;
+            }
+            .weather-temp {
+                font-size: 1em;
+            }
+            .weather-desc {
+                font-size: 0.8em;
+            }
+        }
+        
+        @media screen and (max-width: 380px) {
+            .logo-container img.logo {
+                height: 50px;
+                max-height: 50px;
+            }
+            .header h1 {
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header-container">
-        <div class="clock-wrapper left">
-            <canvas id="analog-clock" width="120" height="120" class="analog-clock"></canvas>
+        <div id="weather-widget" class="weather-widget widget-box">
+            <img id="weather-icon" class="weather-icon" src="" alt="Weather" style="display:none;">
+            <div class="weather-details">
+                <span id="weather-temp" class="weather-temp">--°F</span>
+                <span id="weather-desc" class="weather-desc">Loading...</span>
+            </div>
         </div>
-        
-        <div class="header">
+        <div class="logo-center">
             <div class="logo-container">
                 <img src="/static/images/monmouth-jet-center-logo.png" alt="Monmouth Jet Center Logo" class="logo">
             </div>
-            <h1>Monmouth Executive Airport</h1>
-            {% if error %}
-            <div class="error-message">Error: {{ error }}</div>
-            {% endif %}
+            <div class="header">
+                <h1>Monmouth Executive Airport</h1>
+                {% if error %}
+                <div class="error-message">Error: {{ error }}</div>
+                {% endif %}
+            </div>
         </div>
-        
-        <div class="clock-wrapper right">
-            <div id="digital-clock" class="digital-clock"></div>
+        <div class="clock-wrapper">
+            <div id="digital-clock" class="digital-clock widget-box"></div>
         </div>
     </div>
 
@@ -230,96 +291,7 @@
         </span>
     </footer>
     <script>
-        // Drawing function for analog clock
-        function drawAnalogClock() {
-            const canvas = document.getElementById('analog-clock');
-            const ctx = canvas.getContext('2d');
-            const radius = canvas.height / 2;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw clock face
-            ctx.translate(radius, radius);
-            const gradientRadius = radius * 0.95;
-            const gradient = ctx.createRadialGradient(0, 0, radius * 0.5, 0, 0, gradientRadius);
-            gradient.addColorStop(0, '#1a1a1a');
-            gradient.addColorStop(1, '#2c2c2c');
-            
-            ctx.beginPath();
-            ctx.arc(0, 0, gradientRadius, 0, 2 * Math.PI);
-            ctx.fillStyle = gradient;
-            ctx.fill();
-            
-            // Draw outer rim
-            ctx.beginPath();
-            ctx.arc(0, 0, radius * 0.95, 0, 2 * Math.PI);
-            ctx.strokeStyle = '#6495ED';
-            ctx.lineWidth = radius * 0.03;
-            ctx.stroke();
-            
-            // Draw hour markers
-            ctx.font = radius * 0.15 + "px Arial";
-            ctx.fillStyle = "#fff";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            
-            for(let i = 1; i <= 12; i++) {
-                const ang = i * Math.PI / 6;
-                const x = Math.sin(ang) * (radius * 0.75);
-                const y = -Math.cos(ang) * (radius * 0.75);
-                
-                // Draw hour dots instead of numbers
-                ctx.beginPath();
-                ctx.arc(x, y, radius * 0.03, 0, 2 * Math.PI);
-                ctx.fillStyle = "#fff";
-                ctx.fill();
-            }
-            
-            // Get current time
-            const now = new Date();
-            const hour = now.getHours() % 12;
-            const minute = now.getMinutes();
-            const second = now.getSeconds();
-            
-            // Draw hour hand
-            const hourAngle = (hour + minute/60) * Math.PI / 6;
-            drawHand(ctx, hourAngle, radius * 0.5, radius * 0.05, "#fff");
-            
-            // Draw minute hand
-            const minuteAngle = (minute + second/60) * Math.PI / 30;
-            drawHand(ctx, minuteAngle, radius * 0.7, radius * 0.04, "#fff");
-            
-            // Draw second hand
-            const secondAngle = second * Math.PI / 30;
-            drawHand(ctx, secondAngle, radius * 0.8, radius * 0.02, "#ff6b6b");
-            
-            // Draw center dot
-            ctx.beginPath();
-            ctx.arc(0, 0, radius * 0.07, 0, 2 * Math.PI);
-            ctx.fillStyle = "#6495ED";
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.arc(0, 0, radius * 0.04, 0, 2 * Math.PI);
-            ctx.fillStyle = "#fff";
-            ctx.fill();
-            
-            // Reset transformation
-            ctx.translate(-radius, -radius);
-        }
-        
-        function drawHand(ctx, angle, length, width, color) {
-            ctx.beginPath();
-            ctx.lineWidth = width;
-            ctx.lineCap = "round";
-            ctx.strokeStyle = color;
-            ctx.moveTo(0, 0);
-            ctx.rotate(angle);
-            ctx.lineTo(0, -length);
-            ctx.stroke();
-            ctx.rotate(-angle);
-        }
-        
-        // Update digital clock with improved animation
+        // Digital clock only
         function updateDigitalClock() {
             const now = new Date();
             const hours = now.getHours();
@@ -327,8 +299,6 @@
             const seconds = now.getSeconds().toString().padStart(2, '0');
             const ampm = hours >= 12 ? 'PM' : 'AM';
             const formattedHours = (hours % 12 || 12).toString().padStart(2, '0');
-            
-            // Create elements with different styling
             let html = `
                 <span class="time-unit">${formattedHours}</span>
                 <span class="time-separator">:</span>
@@ -337,25 +307,117 @@
                 <span class="time-unit">${seconds}</span>
                 <span class="time-period">${ampm}</span>
             `;
-            
             document.getElementById('digital-clock').innerHTML = html;
-            
-            // Add blinking effect to separators
+            // Blinking effect
             const separators = document.querySelectorAll('.time-separator');
             separators.forEach(sep => {
                 sep.style.opacity = seconds % 2 === 0 ? '1' : '0.6';
             });
         }
-        
-        // Update clocks every second
-        function updateClocks() {
-            drawAnalogClock();
-            updateDigitalClock();
+        setInterval(updateDigitalClock, 1000);
+        updateDigitalClock();
+
+        // Weather widget for KBLM (Monmouth Executive Airport)
+        async function updateWeatherWidget() {
+            // Use a free weather API, e.g., Open-Meteo
+            const lat = 40.1865, lon = -74.1258;
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&temperature_unit=fahrenheit`;
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.current_weather) {
+                    const temp = Math.round(data.current_weather.temperature);
+                    const code = data.current_weather.weathercode;
+                    const desc = weatherCodeToDesc(code);
+                    document.getElementById('weather-temp').textContent = `${temp}°F`;
+                    document.getElementById('weather-desc').textContent = desc;
+                    // Optional: use a local or remote icon set for weather
+                    const iconUrl = weatherCodeToIcon(code);
+                    if (iconUrl) {
+                        const icon = document.getElementById('weather-icon');
+                        icon.src = iconUrl;
+                        icon.style.display = '';
+                    }
+                } else {
+                    document.getElementById('weather-temp').textContent = '--°F';
+                    document.getElementById('weather-desc').textContent = 'Unavailable';
+                }
+            } catch (e) {
+                document.getElementById('weather-temp').textContent = '--°F';
+                document.getElementById('weather-desc').textContent = 'Unavailable';
+            }
         }
-        
-        // Initialize and set interval
-        updateClocks();
-        setInterval(updateClocks, 1000);
+        // Map Open-Meteo weather codes to descriptions
+        function weatherCodeToDesc(code) {
+            const map = {
+                0: "Clear",
+                1: "Mainly Clear",
+                2: "Partly Cloudy",
+                3: "Overcast",
+                45: "Fog",
+                48: "Depositing Rime Fog",
+                51: "Light Drizzle",
+                53: "Drizzle",
+                55: "Dense Drizzle",
+                56: "Freezing Drizzle",
+                57: "Freezing Drizzle",
+                61: "Light Rain",
+                63: "Rain",
+                65: "Heavy Rain",
+                66: "Freezing Rain",
+                67: "Freezing Rain",
+                71: "Light Snow",
+                73: "Snow",
+                75: "Heavy Snow",
+                77: "Snow Grains",
+                80: "Showers",
+                81: "Rain Showers",
+                82: "Violent Showers",
+                85: "Snow Showers",
+                86: "Heavy Snow Showers",
+                95: "Thunderstorm",
+                96: "Thunderstorm + Hail",
+                99: "Thunderstorm + Hail"
+            };
+            return map[code] || "Unknown";
+        }
+        // Map Open-Meteo weather codes to icon URLs (replace with your own icons if desired)
+        function weatherCodeToIcon(code) {
+            // Using the same icon URLs, the CSS filter will handle making them white
+            const iconMap = {
+                0: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-day-sunny.svg",
+                1: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-day-sunny-overcast.svg",
+                2: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-day-cloudy.svg",
+                3: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-cloudy.svg",
+                45: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-fog.svg",
+                48: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-fog.svg",
+                51: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-sprinkle.svg",
+                53: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-sprinkle.svg",
+                55: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-sprinkle.svg",
+                56: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-rain-mix.svg",
+                57: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-rain-mix.svg",
+                61: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-raindrops.svg",
+                63: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-rain.svg",
+                65: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-rain.svg",
+                66: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-rain-mix.svg",
+                67: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-rain-mix.svg",
+                71: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-snow.svg",
+                73: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-snow.svg",
+                75: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-snow.svg",
+                77: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-snow.svg",
+                80: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-showers.svg",
+                81: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-showers.svg",
+                82: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-showers.svg",
+                85: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-snow.svg",
+                86: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-snow.svg",
+                95: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-thunderstorm.svg",
+                96: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-thunderstorm.svg",
+                99: "https://cdn.jsdelivr.net/gh/erikflowers/weather-icons/svg/wi-thunderstorm.svg"
+            };
+            return iconMap[code] || "";
+        }
+        updateWeatherWidget();
+        setInterval(updateWeatherWidget, 600000); // Update every 10 min
     </script>
 </body>
 </html>

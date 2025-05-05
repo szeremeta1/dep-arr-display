@@ -57,8 +57,10 @@ def fetch_flight_data(airport_code, config):
             timeout=20
         )
         print(f"Arrivals API response status: {arrival_response.status_code}")
+        arrivals_data_debug = None
         if arrival_response.status_code == 200:
             arrival_data = arrival_response.json()
+            arrivals_data_debug = arrival_data  # Save for debug if needed
             arrival_schedule = arrival_data.get('result', {}).get('response', {}).get('airport', {}).get('pluginData', {}).get('schedule', {})
             if arrival_schedule and 'arrivals' in arrival_schedule:
                 arrival_dict = arrival_schedule['arrivals']
@@ -154,6 +156,7 @@ def fetch_flight_data(airport_code, config):
                         print(f"Error parsing arrival flight: {str(e)}")
             else:
                 print("No arrivals data found in response")
+                print("DEBUG: arrival_data =", json.dumps(arrivals_data_debug, indent=2)[:2000])  # Print first 2000 chars for debug
         else:
             print(f"Failed to fetch arrivals: {arrival_response.text}")
 
@@ -174,8 +177,10 @@ def fetch_flight_data(airport_code, config):
             timeout=20
         )
         print(f"Departures API response status: {departure_response.status_code}")
+        departures_data_debug = None
         if departure_response.status_code == 200:
             departure_data = departure_response.json()
+            departures_data_debug = departure_data  # Save for debug if needed
             departure_schedule = departure_data.get('result', {}).get('response', {}).get('airport', {}).get('pluginData', {}).get('schedule', {})
             if departure_schedule and 'departures' in departure_schedule:
                 departure_dict = departure_schedule['departures']
@@ -228,6 +233,7 @@ def fetch_flight_data(airport_code, config):
                         print(f"Error parsing departure flight: {str(e)}")
             else:
                 print("No departures data found in response")
+                print("DEBUG: departure_data =", json.dumps(departures_data_debug, indent=2)[:2000])  # Print first 2000 chars for debug
         else:
             print(f"Failed to fetch departures: {departure_response.text}")
 
@@ -239,11 +245,13 @@ def fetch_flight_data(airport_code, config):
             'departures': departures,
             'arrivals': arrivals
         }
-        if len(departures) > 0 or len(arrivals) > 0:
-            print(f"Returning all FlightRadar24 data: {len(departures)} departures, {len(arrivals)} arrivals")
-            return result
-        print("CRITICAL: Failed to get ANY data from FlightRadar24")
-        raise Exception("No data available from FlightRadar24")
+        # Only raise if BOTH API requests failed (not just empty lists)
+        if (arrival_response.status_code != 200) and (departure_response.status_code != 200):
+            print("CRITICAL: Failed to get ANY data from FlightRadar24 (HTTP error)")
+            raise Exception("No data available from FlightRadar24")
+        # If both lists are empty but HTTP was 200, just return empty lists (board will show 'No arrivals/departures')
+        print(f"Returning FlightRadar24 data: {len(departures)} departures, {len(arrivals)} arrivals")
+        return result
     except Exception as e:
         print(f"ERROR: Could not fetch FlightRadar24 data: {str(e)}")
         raise Exception(f"Failed to fetch FlightRadar24 data: {str(e)}")

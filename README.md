@@ -14,13 +14,18 @@ Originally developed for KBLM (Monmouth Executive Airport), this board is intent
 
 - **Live Departures and Arrivals:** Fetches and displays up-to-date flight information for the configured airport.
 - **Full Aircraft Model Names:** Uses a local CSV to display the full aircraft model name and N-number.
+- **Real-Time Weather Widget:** Displays current temperature and conditions for the airport location.
+- **Digital Clock:** Shows current time with blinking separators for at-a-glance time reference.
 - **Minimalist Display:** No gates, terminals, or baggage info—just the essentials for a small airport.
 - **Carrier Logos:** Displays carrier logos when available.
+- **Flight Status Indicators:** Color-coded status indicators for scheduled, estimated, delayed, and early flights.
 - **Automatic Refresh:** The board refreshes automatically every 60 seconds (customizable).
 - **Error Handling:** Displays error messages if data cannot be fetched.
 - **Easy Customization:** Change the airport or display settings via `config.json`.
 - **Local Caching:** Aircraft type lookups are cached locally to minimize repeated lookups.
 - **Responsive Design:** Optimized for display on TVs, tablets, and mobile devices.
+- **Last Update Indicator:** Shows when the flight data was last refreshed.
+- **Custom Airport Branding:** Easily customizable with your own airport/FBO logo.
 
 ---
 
@@ -37,9 +42,25 @@ Originally developed for KBLM (Monmouth Executive Airport), this board is intent
 pip install -r requirements.txt
 ```
 
-### 3. Configure API Key and Settings
+### 3. Aircraft Data CSV
 
-Edit [`config.json`](config.json) and add your API key and airport details:
+The system requires a CSV file containing aircraft type codes and their full names:
+
+- The default file should be placed at `src/static/aircraft_data.csv`
+- The CSV must have at least two columns named `ICAO_Code` and `Model_FAA`
+- You can use publicly available aircraft type databases or create your own
+
+Example CSV format:
+```
+ICAO_Code,Model_FAA,Manufacturer
+C172,Cessna 172 Skyhawk,Cessna
+PC12,Pilatus PC-12,Pilatus
+CL35,Challenger 350,Bombardier
+```
+
+### 4. Configure API Key and Settings
+
+Edit `config.json` and add your API key and airport details:
 
 ```json
 {
@@ -57,18 +78,47 @@ Edit [`config.json`](config.json) and add your API key and airport details:
 }
 ```
 
-- Change `"airport_code"` and coordinates as needed for your airport.
-- Adjust `"refresh_interval"` (in seconds) for how often the board updates.
+- Change `"airport_code"` to any ICAO airport code
+- Update `"airport_coordinates"` to match your airport's location
+  - You can find these coordinates from various aviation resources or Google Maps
+  - The `"radius"` defines how far from the airport (in km) to include flights
+- Set `"refresh_interval"` to your preferred update frequency (in seconds)
+- Add your FlightRadar24 API key to `"fr24_api_key"`
 
-### 4. Run the application
+### 5. Add Your Airport/FBO Logo
+
+- Replace `src/static/images/monmouth-jet-center-logo.png` with your own logo
+- For best results, use a transparent PNG with a height of 120-200px
+
+### 6. Carrier Logos (Optional)
+
+- Add airline/operator logos to `src/static/images/` as PNG files
+- Update the carrier mapping in `src/app.py` as needed:
+  ```python
+  mapping = {
+      'NetJets': 'netjets.png',
+      'Vista America': 'vistajet.png',
+      # Add your own mappings here
+  }
+  ```
+
+### 7. Run the application
 
 ```bash
 python src/app.py
 ```
 
-### 5. Access the board in your browser
+### 8. Access the board in your browser
 
 Open [http://localhost:5000](http://localhost:5000) in your browser.
+
+### 9. Production Deployment (Optional)
+
+For a production setup, consider using:
+- Gunicorn or uWSGI as the WSGI server
+- Nginx as a reverse proxy
+- Supervisor to manage the process
+- SSL certificate for HTTPS
 
 ---
 
@@ -78,6 +128,8 @@ Open [http://localhost:5000](http://localhost:5000) in your browser.
   Flight information is fetched from the FlightRadar24 API.
 - **Aircraft Type Lookup:**  
   The aircraft code (e.g., "CL35") is looked up in a local CSV (`src/static/aircraft_data.csv`), which returns the full model name (e.g., "Challenger 350"). Results are cached in `data/aircraft_cache.json` for efficiency.
+- **Weather Data:**  
+  Real-time weather is fetched from the Open-Meteo API based on the airport coordinates.
 - **Display:**  
   The board shows scheduled and estimated times, flight numbers, full aircraft model names, registration numbers, and carrier logos (if available).
 
@@ -106,8 +158,12 @@ Open [http://localhost:5000](http://localhost:5000) in your browser.
   Add carrier logos as PNG files to `src/static/images/` and update the carrier mapping in `src/app.py` if needed.
 - **Refresh Rate:**  
   Adjust `"refresh_interval"` in `config.json` (in seconds).
-- **Styling:**  
-  Edit `src/static/css/styles.css` or the inline styles in `src/templates/index.html` for custom branding or layout.
+- **Weather Widget:**  
+  The weather widget uses airport coordinates from `config.json` automatically.
+- **Color Scheme:**  
+  Edit `src/static/css/styles.css` to change colors and appearance.
+- **Layout:**  
+  Modify `src/templates/index.html` for major layout changes or to add new widgets.
 
 ---
 
@@ -115,22 +171,28 @@ Open [http://localhost:5000](http://localhost:5000) in your browser.
 
 - Designed for small airports and FBOs, but can be adapted for any airport supported by FlightRadar24.
 - Carrier logos are matched by name and must be present in `src/static/images/` to display.
-- All data is obtained from the FlightRadar24 API.
+- All flight data is obtained from the FlightRadar24 API.
+- Weather data is obtained from the free Open-Meteo API.
 - Aircraft type lookups are cached locally to reduce repeated lookups and speed up display.
 - The board is intended for informational use only and is not an official source of flight information.
+- The default setup refreshes the webpage every 60 seconds which is suitable for a display-only kiosk.
 
 ---
 
 ## Troubleshooting
 
 - **No aircraft model name shown:**  
-  Make sure the aircraft code exists in `src/static/aircraft_data.csv`. The cache will fall back to the code if not found.
+  Make sure the aircraft code exists in `src/static/aircraft_data.csv`. The system will fall back to showing just the code if not found.
 - **No flight data:**  
-  Ensure your FlightRadar24 API key is correct and your subscription is active.
+  Ensure your FlightRadar24 API key is correct and your subscription is active. Check console logs for specific error messages.
 - **Carrier logo missing:**  
   Add the logo PNG to `src/static/images/` and/or update the mapping in `src/app.py`.
+- **Weather widget not showing:**  
+  Verify your airport coordinates are correct in `config.json`.
 - **App not starting:**  
   Check that all dependencies are installed and your Python version is compatible (Python 3.7+ recommended).
+- **Changes to code not appearing:**  
+  If running in debug mode, try hard-refreshing your browser (Ctrl+F5 or Cmd+Shift+R).
 
 ---
 
