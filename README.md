@@ -1,7 +1,7 @@
 # Departure/Arrival Display
 
 This project displays a departures and arrivals board for any airport of your choosing using live flight data from the FlightRadar24 API. It also shows full aircraft model names and registration numbers using a local CSV lookup.
-
+<img width="1790" alt="image" src="https://github.com/user-attachments/assets/03d8579b-6c20-43d4-b5a0-d1a9a6229c01" />
 ---
 
 ## Background
@@ -29,7 +29,7 @@ This project was originally developed for KBLM (Monmouth Executive Airport), a p
 ### 1. Get API Key
 
 - **FlightRadar24:**  
-  Sign up for a FlightRadar24 subscription [here](https://www.flightradar24.com/premium/) (the Explorer plan at $9/month is sufficient).
+  Sign up for a FlightRadar24 subscription [here](https://fr24api.flightradar24.com/subscriptions-and-credits) (the Explorer plan at $9/month is sufficient).
 
 ### 2. Install dependencies
 
