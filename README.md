@@ -29,7 +29,7 @@ This project was originally developed for KBLM (Monmouth Executive Airport), a p
 ### 1. Get API Key
 
 - **FlightRadar24:**  
-  Sign up for a FlightRadar24 subscription [here](https://www.flightradar24.com/premium/) (the Explorer plan at $9/month is sufficient).
+  Sign up for a FlightRadar24 subscription [here](https://fr24api.flightradar24.com/subscriptions-and-credits) (the Explorer plan at $9/month is sufficient).
 
 ### 2. Install dependencies
 
