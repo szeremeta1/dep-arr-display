@@ -1,7 +1,7 @@
 # Departure/Arrival Display
 
 This project displays a departures and arrivals board for any airport of your choosing using live flight data from the FlightRadar24 API. It also shows full aircraft model names and registration numbers using a local CSV lookup.
-
+<img width="1790" alt="image" src="https://github.com/user-attachments/assets/03d8579b-6c20-43d4-b5a0-d1a9a6229c01" />
 ---
 
 ## Background
