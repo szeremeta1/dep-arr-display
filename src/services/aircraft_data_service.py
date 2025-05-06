@@ -59,9 +59,14 @@ class AircraftDataService:
         - Always keep Gulfstream manufacturer name
         - Keep manufacturer name for small aircraft (Cessna 172, Piper PA-46, etc.)
         - Remove manufacturer for jets (Citation, Challenger, etc.), even from manufacturers that also make small aircraft
+        - Remove any text after a slash (/) character
         """
         if not name or ' ' not in name:
             return name
+            
+        # First, handle slash removal - keep only text before slash
+        if '/' in name:
+            name = name.split('/')[0].strip()
             
         parts = name.split(' ')
         manufacturer = parts[0].lower()
