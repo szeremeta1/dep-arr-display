@@ -56,28 +56,35 @@ class AircraftDataService:
     
     def _format_aircraft_name(self, name):
         """Format aircraft name according to rules:
-        - Remove manufacturer (first word) except for Gulfstream
-        - Keep manufacturer for Cessna models that are just numbers/letters+numbers
+        - Always keep Gulfstream manufacturer name
+        - Keep manufacturer name for small aircraft (Cessna 172, Piper PA-46, etc.)
+        - Remove manufacturer for jets (Citation, Challenger, etc.), even from manufacturers that also make small aircraft
         """
         if not name or ' ' not in name:
             return name
             
         parts = name.split(' ')
-        manufacturer = parts[0]
+        manufacturer = parts[0].lower()
+        model = ' '.join(parts[1:])
+        model_lower = model.lower()
         
         # Always keep Gulfstream
-        if manufacturer.lower() == 'gulfstream':
+        if manufacturer == 'gulfstream':
             return name
             
-        # Keep "Cessna" for simple model names (C172, 172, etc.)
-        if manufacturer.lower() == 'cessna':
-            remainder = ' '.join(parts[1:])
-            # Check if the remainder is just numbers or 1-2 letters + numbers
-            if re.match(r'^[A-Z]{0,2}\d+$', remainder.replace(' ', '')):
-                return name
+        # Common jet model families/identifiers
+        jet_identifiers = [
+            'citation', 'cj', 'challenger', 'global', 'learjet', 'phenom', 
+            'legacy', 'praetor', 'falcon', 'sovereign', 'latitude', 'longitude',
+            'mustang', 'hawker', 'premier', 'beechjet', 'vision', 'sf50', 'pc-24'
+        ]
         
-        # For all other cases, remove the manufacturer
-        return ' '.join(parts[1:])
+        # Check if the model contains any jet identifier
+        if any(jet_id in model_lower for jet_id in jet_identifiers):
+            return model  # It's a jet, remove manufacturer
+        
+        # For all other cases (small aircraft), keep the full name
+        return name
         
     def get_aircraft_name(self, code):
         """Get full aircraft name from ICAO code using the loaded CSV data."""

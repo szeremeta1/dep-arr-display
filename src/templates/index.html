@@ -51,8 +51,6 @@
             color: #aaa;
         }
         
-        /* Remove any inline widget styling to prevent override conflicts */
-
         /* Clock-specific time display styling */
         .time-unit {
             font-weight: 700;
@@ -72,70 +70,6 @@
             opacity: 0.85;
             font-weight: 400;
             letter-spacing: 0.5px;
-        }
-        
-        @media screen and (max-width: 900px) {
-            .header-container {
-                padding: 16px 20px;
-            }
-            .logo-center {
-                margin: 0 20px;
-            }
-            .logo-container img.logo {
-                height: 80px;
-                max-height: 80px;
-            }
-            .header h1 {
-                font-size: 1.6em;
-            }
-            .widget-box {
-                width: 160px;
-                height: 70px;
-            }
-        }
-        
-        @media screen and (max-width: 600px) {
-            .header-container {
-                padding: 10px 10px;
-            }
-            .logo-center {
-                margin: 0 10px;
-            }
-            .widget-box {
-                width: 120px;
-                height: 60px;
-                min-height: auto;
-                font-size: 0.9em;
-                padding: 5px 8px;
-            }
-            .logo-container img.logo {
-                height: 60px;
-                max-height: 60px;
-            }
-            .header h1 {
-                font-size: 1.2em;
-            }
-            .weather-icon {
-                width: 24px;
-                height: 24px;
-                margin-right: 6px;
-            }
-            .weather-temp {
-                font-size: 1em;
-            }
-            .weather-desc {
-                font-size: 0.8em;
-            }
-        }
-        
-        @media screen and (max-width: 380px) {
-            .logo-container img.logo {
-                height: 50px;
-                max-height: 50px;
-            }
-            .header h1 {
-                font-size: 1em;
-            }
         }
     </style>
 </head>
@@ -178,6 +112,17 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% macro show_registration(registration, flight) -%}
+                            {# Normalize both for comparison: uppercase, strip, remove leading N from registration #}
+                            {% set reg = registration|default('', true)|replace(' ', '')|upper %}
+                            {% set reg_no_n = reg.startswith('N') and reg[1:] or reg %}
+                            {% set flight_norm = flight|default('', true)|replace(' ', '')|upper %}
+                            
+                            {# Check if registration without N matches flight number OR if reg is the flight number #}
+                            {% if reg and reg != 'N/A' and reg_no_n != flight_norm and reg != flight_norm %}
+                                | {{ registration }}
+                            {% endif %}
+                        {%- endmacro %}
                         {% if flights.departures %}
                             {% for flight in flights.departures %}
                                 <tr>
@@ -191,7 +136,13 @@
                                         {% endif %}
                                         {{ flight.flight }}
                                         {% if flight.aircraft %}
-                                            <span class="aircraft">{{ flight.aircraft|aircraft_name }} | {% if flight.registration and flight.registration != 'N/A' %}{{ flight.registration }}{% else %}Not Yet Assigned{% endif %}</span>
+                                            <span class="aircraft">
+                                                {{ flight.aircraft|aircraft_name }}
+                                                {{ show_registration(flight.registration, flight.flight) }}
+                                                {% if not flight.registration or flight.registration == 'N/A' %}
+                                                    | Not Yet Assigned
+                                                {% endif %}
+                                            </span>
                                         {% endif %}
                                     </td>
                                     <td>{{ flight.destination.name }} 
@@ -249,7 +200,13 @@
                                         {% endif %}
                                         {{ flight.flight }}
                                         {% if flight.aircraft %}
-                                            <span class="aircraft">{{ flight.aircraft|aircraft_name }} | {% if flight.registration and flight.registration != 'N/A' %}{{ flight.registration }}{% else %}Not Yet Assigned{% endif %}</span>
+                                            <span class="aircraft">
+                                                {{ flight.aircraft|aircraft_name }}
+                                                {{ show_registration(flight.registration, flight.flight) }}
+                                                {% if not flight.registration or flight.registration == 'N/A' %}
+                                                    | Not Yet Assigned
+                                                {% endif %}
+                                            </span>
                                         {% endif %}
                                     </td>
                                     <td>{{ flight.origin.name }}

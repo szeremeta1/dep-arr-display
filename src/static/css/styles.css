@@ -472,6 +472,7 @@ tr:hover td {
     }
 }
 
+/* Improved small screen layout */
 @media screen and (max-width: 480px) {
     /* Optimize column widths for mobile */
     th:first-child, td:first-child {
@@ -495,6 +496,63 @@ tr:hover td {
     .status span {
         display: block;
     }
+    
+    /* Reorganized header for mobile */
+    .header-container {
+        display: flex;
+        flex-direction: column;
+        padding: 15px 10px;
+        gap: 15px;
+    }
+    
+    .header-container > .weather-widget,
+    .header-container > .clock-wrapper {
+        align-self: center;
+        justify-self: center;
+        margin: 0;
+    }
+    
+    .logo-center {
+        order: -1; /* Move logo to the top */
+        margin: 0;
+    }
+    
+    .weather-widget, 
+    .digital-clock {
+        width: 180px;
+        height: 50px;
+    }
+    
+    /* Footer adjustments for mobile */
+    .footer-bar {
+        flex-direction: column;
+        padding: 0 15px 15px 15px;
+        gap: 10px;
+    }
+    
+    .footer-left, 
+    .footer-right {
+        text-align: center;
+        font-size: 0.85em;
+        min-width: unset;
+    }
+}
+
+/* Extra small screens */
+@media screen and (max-width: 360px) {
+    .widget-box {
+        width: 160px;
+        font-size: 0.75em;
+    }
+    
+    .logo {
+        max-height: 60px;
+        height: 60px;
+    }
+    
+    .header h1 {
+        font-size: 1.1em;
+    }
 }
 
 .footer-bar {
@@ -507,14 +565,4 @@ tr:hover td {
     padding: 0 40px 20px 40px;
     width: 100%;
     box-sizing: border-box;
-}
-
-.footer-left {
-    text-align: left;
-}
-
-.footer-right {
-    text-align: right;
-    min-width: 180px;
-    font-style: italic;
 }
