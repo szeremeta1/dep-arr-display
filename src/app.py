@@ -92,6 +92,7 @@ def carrier_logo_filename(carrier):
         'Jet Aviation Flight Services': 'jetaviation.png',
         'Fltplan': 'fltplan.png',
         'Hera Flight': 'heraflight.png',
+        'Presidential Aviation': 'presidentialaviation.png',
         # Add more mappings as needed
     }
     
