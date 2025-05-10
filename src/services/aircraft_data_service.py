@@ -56,39 +56,27 @@ class AircraftDataService:
     
     def _format_aircraft_name(self, name):
         """Format aircraft name according to rules:
-        - Always keep Gulfstream manufacturer name
-        - Keep manufacturer name for small aircraft (Cessna 172, Piper PA-46, etc.)
-        - Remove manufacturer for jets (Citation, Challenger, etc.), even from manufacturers that also make small aircraft
+        - Keep the full name by default
         - Remove any text after a slash (/) character
+        - Only remove the first word (manufacturer) if the full name exceeds 20 characters
         """
-        if not name or ' ' not in name:
+        if not name:
             return name
             
         # First, handle slash removal - keep only text before slash
         if '/' in name:
             name = name.split('/')[0].strip()
             
-        parts = name.split(' ')
-        manufacturer = parts[0].lower()
-        model = ' '.join(parts[1:])
-        model_lower = model.lower()
-        
-        # Always keep Gulfstream
-        if manufacturer == 'gulfstream':
+        # If the name is shorter than or equal to 20 characters, return as-is
+        if len(name) <= 20:
             return name
+        
+        # If longer than 20 chars, remove the first word (assumed to be manufacturer)
+        parts = name.split(' ')
+        if len(parts) > 1:
+            return ' '.join(parts[1:])
             
-        # Common jet model families/identifiers
-        jet_identifiers = [
-            'citation', 'cj', 'challenger', 'global', 'learjet', 'phenom', 
-            'legacy', 'praetor', 'falcon', 'sovereign', 'latitude', 'longitude',
-            'mustang', 'hawker', 'premier', 'beechjet', 'vision', 'sf50', 'pc-24'
-        ]
-        
-        # Check if the model contains any jet identifier
-        if any(jet_id in model_lower for jet_id in jet_identifiers):
-            return model  # It's a jet, remove manufacturer
-        
-        # For all other cases (small aircraft), keep the full name
+        # If there's only one word, return as is
         return name
         
     def get_aircraft_name(self, code):

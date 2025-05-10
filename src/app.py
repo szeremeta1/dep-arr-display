@@ -93,6 +93,9 @@ def carrier_logo_filename(carrier):
         'Fltplan': 'fltplan.png',
         'Hera Flight': 'heraflight.png',
         'Presidential Aviation': 'presidentialaviation.png',
+        'NEAJETS': 'neajets.png',
+        'Trident Aircraft': 'tridentaircraft.png',
+        'East Coast Jets': 'eastcoastjets.png',
         # Add more mappings as needed
     }
     
