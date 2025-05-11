@@ -6,7 +6,7 @@ This project displays a departures and arrivals board for any airport using live
 
 ## Background
 
-Originally developed for KBLM (Monmouth Executive Airport), this board is intentionally simple: no gate, terminal, or baggage info—just scheduled/estimated times, flight numbers, aircraft types, and carriers. The design is responsive and suitable for TVs, tablets, and mobile devices.
+Originally developed for [KBLM (Monmouth Executive Airport)](https://fids.monmouthpilot.com), this board is intentionally simple: no gate, terminal, or baggage info—just scheduled/estimated times, flight numbers, aircraft types, and carriers. The design is responsive and suitable for TVs, tablets, and mobile devices.
 
 ---
 
