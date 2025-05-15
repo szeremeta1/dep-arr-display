@@ -1,5 +1,5 @@
 # Departure/Arrival Display
-![image](https://github.com/user-attachments/assets/f4cca52e-d8c8-4d1e-a452-2f264c24e246)
+![image](https://github.com/user-attachments/assets/b807d7f8-2c6f-4e87-8643-bfe8035b903f)
 This project displays a departures and arrivals board for any airport using live flight data from the FlightRadar24 API. It also shows full aircraft model names and registration numbers using a local CSV lookup. The design is minimalist and optimized for FBO lobbies, pilot lounges, and small airports.
 
 ---
