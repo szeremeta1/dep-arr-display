@@ -1,12 +1,12 @@
 # Departure/Arrival Display
-<img width="1779" alt="image" src="https://github.com/user-attachments/assets/a5948c08-b08c-4326-aa88-4c94cf558fdc" />
+![image](https://github.com/user-attachments/assets/b807d7f8-2c6f-4e87-8643-bfe8035b903f)
 This project displays a departures and arrivals board for any airport using live flight data from the FlightRadar24 API. It also shows full aircraft model names and registration numbers using a local CSV lookup. The design is minimalist and optimized for FBO lobbies, pilot lounges, and small airports.
 
 ---
 
 ## Background
 
-Originally developed for KBLM (Monmouth Executive Airport), this board is intentionally simple: no gate, terminal, or baggage info—just scheduled/estimated times, flight numbers, aircraft types, and carriers. The design is responsive and suitable for TVs, tablets, and mobile devices.
+Originally developed for [KBLM (Monmouth Executive Airport)](https://fids.monmouthpilot.com), this board is intentionally simple: no gate, terminal, or baggage info—just scheduled/estimated times, flight numbers, aircraft types, and carriers. The design is responsive and suitable for TVs, tablets, and mobile devices.
 
 ---
 
