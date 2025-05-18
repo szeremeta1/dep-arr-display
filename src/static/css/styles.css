@@ -140,6 +140,17 @@ body {
     opacity: 0.85;
 }
 
+.flight-landed {
+    font-style: italic;
+    font-size: 0.9em;
+    opacity: 0.7;
+}
+
+.landed {
+    color: #999;
+    font-weight: normal;
+}
+
 @media screen and (max-width: 900px) {
     .header-container {
         padding: 16px 20px;
@@ -346,6 +357,11 @@ tr:hover td {
 .cancelled { 
     color: #ff3333; 
     font-weight: bold;
+}
+.status-landed {
+    font-style: italic;
+    font-size: 0.9em;
+    opacity: 0.7;
 }
 
 .error-message {

@@ -9,6 +9,9 @@ import pytz # type: ignore
 # Structure: {flight_id: {'status': status, 'timestamp': timestamp, 'diverted_to': airport_code}}
 cancelled_flights = {}
 
+# Global dict to track landed flights with their timestamp
+landed_flights = {}
+
 # Helper function to clean out old cancelled/diverted flights
 def clean_cancelled_flights():
     current_time = time.time()
@@ -21,12 +24,27 @@ def clean_cancelled_flights():
     for flight_id in to_remove:
         del cancelled_flights[flight_id]
 
+# Helper function to clean out old landed flights
+def clean_landed_flights():
+    current_time = time.time()
+    # Remove flights that have been landed for more than 10 minutes
+    to_remove = []
+    for flight_id, data in landed_flights.items():
+        if current_time - data['timestamp'] > 600:  # 600 seconds = 10 minutes
+            to_remove.append(flight_id)
+    
+    for flight_id in to_remove:
+        del landed_flights[flight_id]
+
 def fetch_flight_data(airport_code, config):
     """Fetch ALL FlightRadar24 data for the specified airport, including flights with no carrier or logo."""
     print(f"Fetching FlightRadar24 data for {airport_code}")
     
     # Clean old cancelled/diverted flights first
     clean_cancelled_flights()
+    
+    # Clean old landed flights
+    clean_landed_flights()
     
     base_url = "https://api.flightradar24.com/common/v1/airport.json"
     local_tz = pytz.timezone('America/New_York')
@@ -39,6 +57,10 @@ def fetch_flight_data(airport_code, config):
     }
     departures = []
     arrivals = []
+    
+    # Get current timestamp for comparing with estimated arrival times
+    current_time = int(time.time())
+    
     try:
         # Arrivals
         arrivals_params = {
@@ -71,18 +93,24 @@ def fetch_flight_data(airport_code, config):
                         times = f.get('time', {})
                         scheduled_time = None
                         estimated_time = None
+                        estimated_timestamp = None
+                        
                         if times.get('scheduled', {}).get('arrival'):
                             utc_time = datetime.fromtimestamp(times['scheduled']['arrival'], timezone.utc)
                             local_time = utc_time.astimezone(local_tz)
                             scheduled_time = local_time.strftime('%-I:%M %p')
+                        
                         if times.get('estimated', {}).get('arrival'):
-                            utc_time = datetime.fromtimestamp(times['estimated']['arrival'], timezone.utc)
+                            estimated_timestamp = times['estimated']['arrival']
+                            utc_time = datetime.fromtimestamp(estimated_timestamp, timezone.utc)
                             local_time = utc_time.astimezone(local_tz)
                             estimated_time = local_time.strftime('%-I:%M %p')
                         elif times.get('real', {}).get('arrival'):
-                            utc_time = datetime.fromtimestamp(times['real']['arrival'], timezone.utc)
+                            estimated_timestamp = times['real']['arrival']
+                            utc_time = datetime.fromtimestamp(estimated_timestamp, timezone.utc)
                             local_time = utc_time.astimezone(local_tz)
                             estimated_time = local_time.strftime('%-I:%M %p')
+                        
                         delay_status = "on-time"
                         if times.get('scheduled', {}).get('arrival') and (times.get('estimated', {}).get('arrival') or times.get('real', {}).get('arrival')):
                             scheduled_ts = times['scheduled']['arrival']
@@ -93,6 +121,7 @@ def fetch_flight_data(airport_code, config):
                                     delay_status = "delayed"
                                 elif delay_mins < -5:
                                     delay_status = "early"
+                        
                         status_text = f.get('status', {}).get('text', 'N/A')
                         flight_id = f.get('identification', {}).get('id', '') or f.get('identification', {}).get('callsign', '')
                         
@@ -133,7 +162,34 @@ def fetch_flight_data(airport_code, config):
                                 diverted_to = cancelled_flights[flight_id].get('diverted_to')
                                 status_text = f"Diverted to {diverted_to}" if diverted_to else "Diverted"
                             status_class = "cancelled"
+                        
+                        # Check if flight has landed status from API
+                        elif status_text.lower() == "landed":
+                            landed_flights[flight_id] = {
+                                'status': 'landed',
+                                'timestamp': time.time()
+                            }
+                            status_class = "landed"
+                            is_special_status = True
+                            status_text = "Landed"
+                        
+                        # Check if flight is already in our landed_flights dictionary
+                        elif flight_id in landed_flights:
+                            status_class = "landed"
+                            is_special_status = True
+                            status_text = "Landed"
                             
+                        # NEW LOGIC: Check if estimated arrival time is in the past
+                        elif estimated_timestamp and estimated_timestamp <= current_time:
+                            # If estimated arrival time is now or in the past, mark as landed
+                            landed_flights[flight_id] = {
+                                'status': 'landed',
+                                'timestamp': time.time()
+                            }
+                            status_class = "landed"
+                            is_special_status = True
+                            status_text = "Landed"
+                        
                         arrivals.append({
                             'scheduled_time': scheduled_time or 'N/A',
                             'scheduled_timestamp': times.get('scheduled', {}).get('arrival', 0),
@@ -237,9 +293,11 @@ def fetch_flight_data(airport_code, config):
         else:
             print(f"Failed to fetch departures: {departure_response.text}")
 
+        # Sort arrivals: landed flights at the top, then by scheduled timestamp
+        arrivals.sort(key=lambda x: (x['status_class'] != 'landed', x.get('scheduled_timestamp', 0)))
+
         # Sort by scheduled timestamp (including flights with no carrier/logo)
         departures.sort(key=lambda x: x.get('scheduled_timestamp', 0))
-        arrivals.sort(key=lambda x: x.get('scheduled_timestamp', 0))
 
         result = {
             'departures': departures,

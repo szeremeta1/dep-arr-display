@@ -57,11 +57,8 @@ def update_flight_data():
 
 # Register the filter using the decorator approach
 @app.template_filter('carrier_logo')
-def carrier_logo_filename(carrier):
-    """Find logo for carrier if it exists, otherwise return empty string"""
-    if not carrier:
-        return ''
-    
+def carrier_logo_filename(carrier, flight=None):
+    """Find logo for carrier if it exists, otherwise try callsign prefix, then return empty string"""
     # Map common carriers to their logo filenames
     mapping = {
         'NetJets': 'netjets.png',
@@ -96,19 +93,51 @@ def carrier_logo_filename(carrier):
         'NEAJETS': 'neajets.png',
         'Trident Aircraft': 'tridentaircraft.png',
         'East Coast Jets': 'eastcoastjets.png',
+        'ATI Jet': 'jetvia.png',
+        'Jetvia': 'jetvia.png',
+        'STAjets': 'stajets.png',
+        'Carlisle Air Group': 'carlisleairgroup.png',
+        'Hop-A-Jet': 'hopajet.png',
+        'Journey Aviation': 'journeyaviation.png',
+        'Executive Jet Management': 'ejm.png',
+        'BellAir': 'bellair.png',
+        'NexGen Aviation': 'nexgenaviation.png',
+        'Flight Options': 'flightoptions.png',
+        'Worldwide Jet Charter': 'worldwidejetcharter.png',
         # Add more mappings as needed
     }
     
-    # Look for the carrier in our mapping
-    filename = mapping.get(carrier, carrier.lower().replace(' ', '') + '.png')
+    # Map callsign prefixes to logo filenames
+    callsign_prefix_mapping = {
+        'LFG': 'letsjett.png',
+        'JNY': 'journeyaviation.png',
+        'JTL': 'jetlinxaviation.png',
+    }
     
-    # Check if file exists in static directory
-    static_path = os.path.join(project_dir, 'src', 'static', 'images', filename)
-    if os.path.exists(static_path):
-        return filename
+    # First try with carrier name if provided
+    filename = None
+    if carrier:
+        # Look for the carrier in our mapping
+        filename = mapping.get(carrier, carrier.lower().replace(' ', '') + '.png')
         
+        # Check if file exists in static directory
+        static_path = os.path.join(project_dir, 'src', 'static', 'images', filename)
+        if os.path.exists(static_path):
+            return filename
+    
+    # If no carrier provided or no logo found with carrier name, try callsign prefix
+    if flight:
+        # Extract callsign prefix (first 3 characters)
+        if isinstance(flight, str) and len(flight) >= 3:
+            prefix = flight[:3].upper()
+            if prefix in callsign_prefix_mapping:
+                filename = callsign_prefix_mapping[prefix]
+                static_path = os.path.join(project_dir, 'src', 'static', 'images', filename)
+                if os.path.exists(static_path):
+                    return filename
+    
     # If no logo found, return empty string but don't filter out the flight
-    print(f"No logo found for carrier: {carrier}")
+    print(f"No logo found for carrier: {carrier}, flight: {flight}")
     return ''
 
 @app.template_filter('aircraft_name')
